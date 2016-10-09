@@ -43,12 +43,10 @@ From the NodeBB Admin panel, you can configure the following settings to be stor
 * `host` - The base URL for the asset.  **Typcially http://\<bucket\>.\<endpoint\>.aliyuncs.com**
 * `Region` - The endpoint of the OSS. **like oss-cn-hangzhou**
 * `path` - The asset path (optional)
-* `accessKeyId` — The AWS Access Key Id
-* `secretAccessKey` — The AWS Secret Access Key
+* `accessKeyId` — The OSS Access Key Id
+* `secretAccessKey` — The OSS Secret Access Key
 
-**NOTE: Storing your AWS Credentials in the database is bad practice, and you really shouldn't do it.**
-
-We highly recommend using either **Environment Variables** or **Instance Meta-data** instead.
+**NOTE: Storing your OSS Credentials in the database is bad practice, and you really shouldn't do it.**
 
 ## Contributing
 Feel free to fork and pull request.
