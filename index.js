@@ -1,11 +1,10 @@
 var Package = require("./package.json");
 
-var AWS = require("aws-sdk"),
+var OSS = require('ali-oss'),
 	mime = require("mime"),
 	uuid = require("uuid").v4,
 	fs = require("fs"),
 	request = require("request"),
-	path = require("path"),
 	winston = module.parent.require("winston"),
 	gm = require("gm"),
 	im = gm.subClass({imageMagick: true}),
@@ -16,14 +15,13 @@ var plugin = {}
 
 "use strict";
 
-var S3Conn = null;
+var client = null;
 var settings = {
 	"accessKeyId": false,
 	"secretAccessKey": false,
-	"region": process.env.AWS_DEFAULT_REGION || "us-east-1",
-	"bucket": process.env.S3_UPLOADS_BUCKET || undefined,
-	"host": process.env.S3_UPLOADS_HOST || "s3.amazonaws.com",
-	"path": process.env.S3_UPLOADS_PATH || undefined
+	"region": process.env.OSS_DEFAULT_REGION || "oss-cn-hangzhou",
+	"bucket": process.env.OSS_UPLOADS_BUCKET || undefined,
+	"path": process.env.OSS_UPLOADS_PATH || undefined
 };
 
 var accessKeyIdFromDb = false;
@@ -57,39 +55,34 @@ function fetchSettings(callback) {
 		}
 
 		if (!newSettings.bucket) {
-			settings.bucket = process.env.S3_UPLOADS_BUCKET || "";
+			settings.bucket = process.env.OSS_UPLOADS_BUCKET || "";
 		} else {
 			settings.bucket = newSettings.bucket;
 		}
 
 		if (!newSettings.host) {
-			settings.host = process.env.S3_UPLOADS_HOST || "";
+			settings.host = process.env.OSS_UPLOADS_HOST || "";
 		} else {
 			settings.host = newSettings.host;
 		}
 
 		if (!newSettings.path) {
-			settings.path = process.env.S3_UPLOADS_PATH || "";
+			settings.path = process.env.OSS_UPLOADS_PATH || "";
 		} else {
 			settings.path = newSettings.path;
 		}
 
 		if (!newSettings.region) {
-			settings.region = process.env.AWS_DEFAULT_REGION || "";
+			settings.region = process.env.OSS_DEFAULT_REGION || "";
 		} else {
 			settings.region = newSettings.region;
 		}
 
-		if (settings.accessKeyId && settings.secretAccessKey) {
-			AWS.config.update({
+		if (settings.accessKeyId && settings.secretAccessKey && settings.region) {
+			client = new OSS.Wrapper({
+				region: settings.region,
 				accessKeyId: settings.accessKeyId,
-				secretAccessKey: settings.secretAccessKey
-			});
-		}
-
-		if (settings.region) {
-			AWS.config.update({
-				region: settings.region
+				accessKeySecret: settings.secretAccessKey
 			});
 		}
 
@@ -99,12 +92,12 @@ function fetchSettings(callback) {
 	});
 }
 
-function S3() {
-	if (!S3Conn) {
-		S3Conn = new AWS.S3();
+function OSSClient() {
+	if (!client) {
+		fetchSettings();
 	}
 
-	return S3Conn;
+	return client;
 }
 
 function makeError(err) {
@@ -123,7 +116,7 @@ plugin.activate = function () {
 };
 
 plugin.deactivate = function () {
-	S3Conn = null;
+	client = null;
 };
 
 plugin.load = function (params, callback) {
@@ -131,12 +124,12 @@ plugin.load = function (params, callback) {
 		if (err) {
 			return winston.error(err.message);
 		}
-		var adminRoute = "/admin/plugins/s3-uploads";
+		var adminRoute = "/admin/plugins/ali-oss";
 
 		params.router.get(adminRoute, params.middleware.applyCSRF, params.middleware.admin.buildHeader, renderAdmin);
 		params.router.get("/api" + adminRoute, params.middleware.applyCSRF, renderAdmin);
 
-		params.router.post("/api" + adminRoute + "/s3settings", s3settings);
+		params.router.post("/api" + adminRoute + "/osssettings", OSSsettings);
 		params.router.post("/api" + adminRoute + "/credentials", credentials);
 
 		callback();
@@ -166,10 +159,10 @@ function renderAdmin(req, res) {
 		csrf: token
 	};
 
-	res.render("admin/plugins/s3-uploads", data);
+	res.render("admin/plugins/ali-oss", data);
 }
 
-function s3settings(req, res, next) {
+function OSSsettings(req, res, next) {
 	var data = req.body;
 	var newSettings = {
 		bucket: data.bucket || "",
@@ -224,7 +217,7 @@ plugin.uploadImage = function (data, callback) {
 		}
 
 		fs.readFile(image.path, function (err, buffer) {
-			uploadToS3(image.name, err, buffer, callback);
+			uploadToOSS(image.name, err, buffer, callback);
 		});
 	}
 	else {
@@ -235,6 +228,7 @@ plugin.uploadImage = function (data, callback) {
 		// Resize image.
 		im(request(image.url), filename)
 			.resize(imageDimension + "^", imageDimension + "^")
+			.setFormat('png')
 			.stream(function (err, stdout, stderr) {
 				if (err) {
 					return callback(makeError(err));
@@ -247,7 +241,7 @@ plugin.uploadImage = function (data, callback) {
 					buf = Buffer.concat([buf, d]);
 				});
 				stdout.on("end", function () {
-					uploadToS3(filename, null, buf, callback);
+					uploadToOSS(filename, null, buf, callback);
 				});
 			});
 	}
@@ -271,68 +265,68 @@ plugin.uploadFile = function (data, callback) {
 	}
 
 	fs.readFile(file.path, function (err, buffer) {
-		uploadToS3(file.name, err, buffer, callback);
+		uploadToOSS(file.name, err, buffer, callback);
 	});
 };
 
-function uploadToS3(filename, err, buffer, callback) {
+function uploadToOSS(filename, err, buffer, callback) {
 	if (err) {
 		return callback(makeError(err));
 	}
 
-	var s3Path;
+	var ossPath;
 	if (settings.path && 0 < settings.path.length) {
-		s3Path = settings.path;
+		ossPath = settings.path;
 
-		if (!s3Path.match(/\/$/)) {
+		if (!ossPath.match(/\/$/)) {
 			// Add trailing slash
-			s3Path = s3Path + "/";
+			ossPath = ossPath + "/";
 		}
 	}
 	else {
-		s3Path = "/";
+		ossPath = "/";
 	}
 
-	var s3KeyPath = s3Path.replace(/^\//, ""); // S3 Key Path should not start with slash.
+	var ossKeyPath = ossPath.replace(/^\//, ""); // OSS Key Path should not start with slash.
 
 	var params = {
 		Bucket: settings.bucket,
 		ACL: "public-read",
-		Key: s3KeyPath + uuid() + path.extname(filename),
+		Key: ossKeyPath + uuid() + '.png',
 		Body: buffer,
 		ContentLength: buffer.length,
 		ContentType: mime.lookup(filename)
 	};
 
-	S3().putObject(params, function (err) {
-		if (err) {
-			return callback(makeError(err));
-		}
-
-		// amazon has https enabled, we use it by default
-		var host = "https://" + params.Bucket +".s3.amazonaws.com";
+	var ossClient = OSSClient();
+	ossClient.useBucket(settings.bucket);
+	ossClient.put(params.Key, buffer).then(function(result) {
+		var host = "https://" + params.Bucket +"."+ settings.region + ".aliyuncs.com";
+		var url = result.url;
 		if (settings.host && 0 < settings.host.length) {
 			host = settings.host;
 			// host must start with http or https
 			if (!host.startsWith("http")) {
 				host = "http://" + host;
 			}
+			url = host + "/" + params.Key
 		}
-
 		callback(null, {
 			name: filename,
-			url: host + "/" + params.Key
+			url: url
 		});
-	});
+	}, function(err) {
+		return callback(makeError(err));
+	})
 }
 
 var admin = plugin.admin = {};
 
 admin.menu = function (custom_header, callback) {
 	custom_header.plugins.push({
-		"route": "/plugins/s3-uploads",
+		"route": "/plugins/ali-oss",
 		"icon": "fa-envelope-o",
-		"name": "S3 Uploads"
+		"name": "Aliyun OSS"
 	});
 
 	callback(null, custom_header);

@@ -1,11 +1,11 @@
 {
-    "id": "nodebb-plugin-s3-uploads-updated",
-    "name": "S3 Uploads Plugin",
-    "description": "A plugin for NodeBB to take file uploads and store them on S3 updated for 1.0",
-    "url": "https://github.com/LewisMcMahon/nodebb-plugin-s3-uploads",
+    "id": "nodebb-plugin-ali-oss",
+    "name": "Aliyun OSS Plugin",
+    "description": "A plugin for NodeBB to take file uploads and store them on OSS for nodebb 1.0",
+    "url": "https://github.com/ziofat/nodebb-plugin-ali-oss",
     "library": "./index.js",
     "staticDirs": {
-        "s3": "public"
+        "oss": "public"
     },
     "hooks": [
         { "hook": "static:app.load", "method": "load"},
