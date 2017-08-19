@@ -292,7 +292,7 @@ function uploadToOSS(filename, err, buffer, callback) {
 	var params = {
 		Bucket: settings.bucket,
 		ACL: "public-read",
-		Key: ossKeyPath + uuid() + '.png',
+		Key: ossKeyPath + uuid() + '.' + mime.extension(mime.lookup(filename)),
 		Body: buffer,
 		ContentLength: buffer.length,
 		ContentType: mime.lookup(filename)
