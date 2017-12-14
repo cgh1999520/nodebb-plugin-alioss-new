@@ -1,4 +1,6 @@
 # NodeBB Aliyun OSS Plugin
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fziofat%2Fnodebb-plugin-ali-oss.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fziofat%2Fnodebb-plugin-ali-oss?ref=badge_shield)
+
 
 This plugin is a fork of [nodebb-plugin-s3-uploads](https://github.com/LouiseMcMahon/nodebb-plugin-s3-uploads).
 
@@ -50,3 +52,7 @@ From the NodeBB Admin panel, you can configure the following settings to be stor
 
 ## Contributing
 Feel free to fork and pull request.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fziofat%2Fnodebb-plugin-ali-oss.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fziofat%2Fnodebb-plugin-ali-oss?ref=badge_large)
