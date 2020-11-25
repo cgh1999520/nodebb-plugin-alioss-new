@@ -36,18 +36,25 @@ function fetchSettings(callback) {
             return;
         }
 
-        if (newSettings.accessKeyId) {
-            settings.accessKeyId = newSettings.accessKeyId;
-        }
-        if (newSettings.secretAccessKey) {
-            settings.secretAccessKey = newSettings.secretAccessKey;
-        } else {
-            settings.secretAccessKey = false;
-        }
 
         // 阿里OSS 配置， 从 config.json 获取, 无法获取，则从系统环境变量获取
         let aliOssConfig = Config.aliOssConfig
         let processEnv = process.env
+
+        if (!newSettings.accessKeyId) {
+            settings.accessKeyId =(aliOssConfig
+                ? aliOssConfig.OSS_ACCESS_KEY_ID
+                : processEnv.OSS_ACCESS_KEY_ID) || false;
+        }else {
+            settings.accessKeyId = newSettings.accessKeyId || false;
+        }
+        if (!newSettings.secretAccessKey) {
+            settings.accessKeyId =(aliOssConfig
+                ? aliOssConfig.OSS_SECRET_ACCESS_KEY
+                : processEnv.OSS_SECRET_ACCESS_KEY) || false;
+        }else {
+            settings.secretAccessKey = newSettings.secretAccessKey;
+        }
         if (!newSettings.bucket) {
             settings.bucket = (aliOssConfig
                 ? aliOssConfig.OSS_UPLOADS_BUCKET
