@@ -56,8 +56,8 @@ export OSS_UPLOADS_PATH="path"
        }
 }
 ```
- **提示（NOTE）:** 你只需要把以上代码添加至config.json 末尾后重启nodebb 服务，不需要操作太多，这可能会打乱 nodebb 配置的规则，但这绝对操作最便捷的。
-  (You only need to add the above code to the end of config.json and restart the nodebb service. There is no need to do too much. This may disrupt the rules of nodebb configuration, but it is definitely the most convenient operation.)
+ **提示（NOTE）:** 你只需要把以上代码添加至config.json 末尾后重启nodebb 服务，不需要操作太多，这可能会打乱 nodebb 配置的规则，但这绝对操作最便捷的。 强烈建议你只用RAM 子账号并控制权限，已防止资源滥用或其它不必要的损失。
+  (**NOTE:** You only need to add the above code to the end of config.json and restart the nodebb service. There is no need to do too much. This may disrupt the rules of nodebb configuration, but it is definitely the most convenient operation. It is strongly recommended that you only use RAM sub-accounts and control permissions to prevent resource abuse or other unnecessary losses.)
  
 ### Database Backed Variables
 
@@ -78,3 +78,9 @@ Feel free to fork and pull request.
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcgh1999520%2Fnodebb-plugin-alioss-new.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcgh1999520%2Fnodebb-plugin-alioss-new?ref=badge_large)
+
+## HINT
+ 翻译均为机器翻译，我没有那么好的英语水平。 如果你在安装使用中，遇见问题，可通过邮箱或者来我的社区 https://www.owlcity.vip 找到我。
+ All translations are machine translation, and I don't have that good English level. If you encounter problems during installation and use, you can find me by email or in my community https://www.owlcity.vip.
+
+## END
