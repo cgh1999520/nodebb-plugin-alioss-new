@@ -26,7 +26,7 @@ export OSS_UPLOADS_PATH="path"
 
 <h3>Instance meta-data</h3>
 <div class="alert alert-warning">
-	<p>If you need help, create an <a href="https://github.com/ziofat/nodebb-plugin-ali-oss/issues">issue on
+	<p>If you need help, create an <a href="https://github.com/cgh1999520/nodebb-plugin-alioss-new">issue on
 		Github</a>.</p>
 </div>
 

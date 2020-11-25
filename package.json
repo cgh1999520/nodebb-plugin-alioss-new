@@ -1,14 +1,14 @@
 {
-  "name": "nodebb-plugin-ali-oss",
-  "version": "0.1.2",
-  "description": "A plugin for NodeBB to take file uploads and store them on OSS for nodebb 1.0",
+  "name": "nodebb-plugin-alioss-new",
+  "version": "1.0.1",
+  "description": "A plugin for NodeBB to take file uploads and store them on Aliyun OSS, NodeBB version >=  nodebb 1.5*, Less than 1.5 unknown compatibility \n; ",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ziofat/nodebb-plugin-ali-oss.git"
+    "url": "https://github.com/cgh1999520/nodebb-plugin-alioss-new"
   },
   "keywords": [
     "nodebb",
@@ -17,10 +17,10 @@
     "plugin",
     "uploads"
   ],
-  "author": "ziofat",
+  "author": "cgh1999520",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ziofat/nodebb-plugin-ali-oss/issues"
+    "url": "https://github.com/cgh1999520/nodebb-plugin-alioss-new/issues"
   },
   "nbbpm": {
     "compatibility": "^1.0.0"
