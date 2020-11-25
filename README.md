@@ -1,7 +1,9 @@
-# NodeBB Aliyun OSS Plugin
+# NodeBB 上传阿里oss 插件 
+## NodeBB Aliyun OSS Plugin
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcgh1999520%2Fnodebb-plugin-alioss-new.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcgh1999520%2Fnodebb-plugin-alioss-new?ref=badge_shield)
 
-This plugin is a fork of [nodebb-plugin-ali-oss](https://github.com/ziofat/nodebb-plugin-ali-oss).
+这个插件源是(This plugin is a fork of) [nodebb-plugin-ali-oss](https://github.com/ziofat/nodebb-plugin-ali-oss).
  
 `npm install nodebb-plugin-alioss-new or yarn add nodebb-plugin-alioss-new`
 
@@ -9,20 +11,21 @@ This plugin is a fork of [nodebb-plugin-ali-oss](https://github.com/ziofat/nodeb
 | ---------------| -------------- |:-----------------------:|
 | 1.0.1          | NodeBB         | >= 1.5.* |
 
-A plugin for NodeBB to take file uploads and store them on S3, uses the `filter:uploadImage` hook in NodeBB. 
+一个用于NodeBB的插件，用于上传文件并将其存储在S3上，它使用NodeBB中的`filter：uploadImage`钩子。 
+(A plugin for NodeBB to take file uploads and store them on S3, uses the `filter:uploadImage` hook in NodeBB. )
 
 ## Aliyun OSS Configuration
 
-You can configure this plugin via a combination of the below, for instance, you can use **environment variables**. You can also configure via the NodeBB Admin panel, which will result in the Bucket and Credentials being stored in the NodeBB Database.
+您可以通过以下组合配置此插件，例如，您可以使用**环境变量**。您可以通过NodeBB Admin面板进行配置，您可以通过 config.json 配置，即使它可能打乱 nodebb config.json的规则，但它是最便利的一种方式，完整的加载顺序为：
+(You can configure this plugin with the following combinations, for example, you can use **environment variables**. You can configure it through the NodeBB Admin panel, and you can configure it through config.json. Even though it may disrupt the rules of nodebb config.json, it is the most convenient way. The complete loading sequence is:)
 
-If you decide to use the Database storage for Credentials, then they will take precedence over both Environment Variables and Instance Meta-data, the full load order is:
+1. 数据库 - Database
+3. 基本配置文件 - Config.json
+2. 系统环境变量 - Environment Variables
 
-1. Database
-3. Config.json
-2. Environment Variables
-
+例如，对于[talk.kano.me]（http://talk.kano.me），我们将存储桶名称存储在环境变量中，并使用安全令牌服务自动发现凭据。 （
 For instance, for [talk.kano.me](http://talk.kano.me), we store the Bucket name in an Environment Variable, and the Credentials are discovered automatically with the Security Token Service.
-
+）
 ### Environment Variables
 
 ```
@@ -33,6 +36,8 @@ export OSS_UPLOADS_BUCKET="mybucket"
 export OSS_UPLOADS_HOST="host"
 export OSS_UPLOADS_PATH="path"
 ```
+
+**NOTE**资产宿主是可选的-如果您未指定资产宿主，则默认资产宿主为`<bucket>。<endpoint> .aliyuncs.com`。 **NOTE**资产路径是可选的-如果您未指定资产路径，则默认资产路径为`/`。
 
 **NOTE:** Asset host is optional - If you do not specify an asset host, then the default asset host is `<bucket>.<endpoint>.aliyuncs.com`.
 **NOTE:** Asset path is optional - If you do not specify an asset path, then the default asset path is `/`.
@@ -65,6 +70,7 @@ From the NodeBB Admin panel, you can configure the following settings to be stor
 * `accessKeyId` — The OSS Access Key Id
 * `secretAccessKey` — The OSS Secret Access Key
 
+**注意：将OSS凭证存储在数据库中是不明智的做法，您实际上不应该这样做。**
 **NOTE: Storing your OSS Credentials in the database is bad practice, and you really shouldn't do it.**
 
 ## Contributing
