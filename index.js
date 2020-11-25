@@ -35,61 +35,68 @@ function fetchSettings(callback) {
             }
             return;
         }
+        try {
 
+            // 阿里OSS 配置， 从 config.json 获取, 无法获取，则从系统环境变量获取
+            let aliOssConfig = Config.aliOssConfig
+            let processEnv = process.env
 
-        // 阿里OSS 配置， 从 config.json 获取, 无法获取，则从系统环境变量获取
-        let aliOssConfig = Config.aliOssConfig
-        let processEnv = process.env
+            if (!newSettings.accessKeyId) {
+                settings.accessKeyId =(aliOssConfig
+                    ? aliOssConfig.OSS_ACCESS_KEY_ID
+                    : processEnv.OSS_ACCESS_KEY_ID) || false;
+            }else {
+                settings.accessKeyId = newSettings.accessKeyId || false;
+            }
+            if (!newSettings.secretAccessKey) {
+                settings.secretAccessKey =(aliOssConfig
+                    ? aliOssConfig.OSS_SECRET_ACCESS_KEY
+                    : processEnv.OSS_SECRET_ACCESS_KEY) || false;
+            }else {
+                settings.secretAccessKey = newSettings.secretAccessKey || false;
+            }
+            if (!newSettings.bucket) {
+                settings.bucket = (aliOssConfig
+                    ? aliOssConfig.OSS_UPLOADS_BUCKET
+                    : processEnv.OSS_UPLOADS_BUCKET) || "";
+            } else {
+                settings.bucket = newSettings.bucket;
+            }
+            if (!newSettings.host) {
+                settings.host = (aliOssConfig
+                    ? aliOssConfig.OSS_UPLOADS_HOST
+                    : processEnv.OSS_UPLOADS_HOST) || "";
+            } else {
+                settings.host = newSettings.host;
+            }
+            if (!newSettings.path) {
+                settings.path = (aliOssConfig
+                    ? aliOssConfig.OSS_UPLOADS_PATH
+                    : processEnv.OSS_UPLOADS_PATH) || "";
+            } else {
+                settings.path = newSettings.path;
+            }
+            if (!newSettings.region) {
+                settings.region = (aliOssConfig
+                    ? aliOssConfig.OSS_DEFAULT_REGION
+                    : processEnv.OSS_DEFAULT_REGION) || "";
+            } else {
+                settings.region = newSettings.region;
+            }
 
-        if (!newSettings.accessKeyId) {
-            settings.accessKeyId =(aliOssConfig
-                ? aliOssConfig.OSS_ACCESS_KEY_ID
-                : processEnv.OSS_ACCESS_KEY_ID) || false;
-        }else {
-            settings.accessKeyId = newSettings.accessKeyId || false;
-        }
-        if (!newSettings.secretAccessKey) {
-            settings.accessKeyId =(aliOssConfig
-                ? aliOssConfig.OSS_SECRET_ACCESS_KEY
-                : processEnv.OSS_SECRET_ACCESS_KEY) || false;
-        }else {
-            settings.secretAccessKey = newSettings.secretAccessKey;
-        }
-        if (!newSettings.bucket) {
-            settings.bucket = (aliOssConfig
-                ? aliOssConfig.OSS_UPLOADS_BUCKET
-                : processEnv.OSS_UPLOADS_BUCKET) || "";
-        } else {
-            settings.bucket = newSettings.bucket;
-        }
-        if (!newSettings.host) {
-            settings.host = (aliOssConfig
-                ? aliOssConfig.OSS_UPLOADS_HOST
-                : processEnv.OSS_UPLOADS_HOST) || "";
-        } else {
-            settings.host = newSettings.host;
-        }
-        if (!newSettings.path) {
-            settings.path = (aliOssConfig
-                ? aliOssConfig.OSS_UPLOADS_PATH
-                : processEnv.OSS_UPLOADS_PATH) || "";
-        } else {
-            settings.path = newSettings.path;
-        }
-        if (!newSettings.region) {
-            settings.region = (aliOssConfig
-                ? aliOssConfig.OSS_DEFAULT_REGION
-                : processEnv.OSS_DEFAULT_REGION) || "";
-        } else {
-            settings.region = newSettings.region;
-        }
-
-        if (settings.accessKeyId && settings.secretAccessKey && settings.region) {
-            client = new OSS.Wrapper({
-                region: settings.region,
-                accessKeyId: settings.accessKeyId,
-                accessKeySecret: settings.secretAccessKey
-            });
+            if (settings.accessKeyId && settings.secretAccessKey && settings.region) {
+                client = new OSS.Wrapper({
+                    region: settings.region,
+                    accessKeyId: settings.accessKeyId,
+                    accessKeySecret: settings.secretAccessKey
+                });
+            }
+        }catch (e) {
+            winston.error(e);
+            if (typeof callback === "function") {
+                callback(e);
+            }
+            return;
         }
         if (typeof callback === "function") {
             callback();
