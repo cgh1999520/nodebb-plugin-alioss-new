@@ -5,11 +5,11 @@ var OSS = require('ali-oss'),
 	uuid = require("uuid").v4,
 	fs = require("fs"),
 	request = require("request"),
-	winston = module.parent.require("winston"),
 	gm = require("gm"),
 	im = gm.subClass({imageMagick: true}),
-	meta = module.parent.require("./meta"),
-	db = module.parent.require("./database");
+	meta = require.main.require("./src/meta"),
+	winston = require.main.require("winston"),
+	db = require.main.require("./src/database");
 
 var plugin = {}
 
