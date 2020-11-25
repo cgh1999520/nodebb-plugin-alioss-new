@@ -20,9 +20,10 @@ let client = null;
 let settings = {
     "accessKeyId": false,
     "secretAccessKey": false,
-    "region": process.env.OSS_DEFAULT_REGION || "oss-cn-hangzhou",
-    "bucket": process.env.OSS_UPLOADS_BUCKET || undefined,
-    "path": process.env.OSS_UPLOADS_PATH || undefined
+    "region": "", // 节点区域
+    "bucket": "", // 节点名称
+    "host": "", // 访问地址
+    "path": "" // 保存路径
 };
 
 function fetchSettings(callback) {
@@ -44,26 +45,34 @@ function fetchSettings(callback) {
             settings.secretAccessKey = false;
         }
 
+        // 阿里OSS 配置， 从 config.json 获取, 无法获取，则从系统环境变量获取
+        let aliOssConfig = Config.aliOssConfig
+        let processEnv = process.env
         if (!newSettings.bucket) {
-            settings.bucket = process.env.OSS_UPLOADS_BUCKET || "";
+            settings.bucket = (aliOssConfig
+                ? aliOssConfig.OSS_UPLOADS_BUCKET
+                : processEnv.OSS_UPLOADS_BUCKET) || "";
         } else {
             settings.bucket = newSettings.bucket;
         }
-
         if (!newSettings.host) {
-            settings.host = process.env.OSS_UPLOADS_HOST || "";
+            settings.host = (aliOssConfig
+                ? aliOssConfig.OSS_UPLOADS_HOST
+                : processEnv.OSS_UPLOADS_HOST) || "";
         } else {
             settings.host = newSettings.host;
         }
-
         if (!newSettings.path) {
-            settings.path = process.env.OSS_UPLOADS_PATH || "";
+            settings.path = (aliOssConfig
+                ? aliOssConfig.OSS_UPLOADS_PATH
+                : processEnv.OSS_UPLOADS_PATH) || "";
         } else {
             settings.path = newSettings.path;
         }
-
         if (!newSettings.region) {
-            settings.region = process.env.OSS_DEFAULT_REGION || "";
+            settings.region = (aliOssConfig
+                ? aliOssConfig.OSS_DEFAULT_REGION
+                : processEnv.OSS_DEFAULT_REGION) || "";
         } else {
             settings.region = newSettings.region;
         }
@@ -75,7 +84,6 @@ function fetchSettings(callback) {
                 accessKeySecret: settings.secretAccessKey
             });
         }
-
         if (typeof callback === "function") {
             callback();
         }
@@ -281,8 +289,8 @@ function uploadToOSS(filename, err, buffer, callback) {
         if (settings.host && 0 < settings.host.length) {
             host = settings.host;
             // host must start with http or https
-            if (!host.startsWith("https") || !host.startsWith("http")) {
-                host = "//" + host;
+            if (!host.startsWith("https")) {
+                host = "https://" + host;
             }
             url = host + "/" + params.Key
         }
