@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-alioss-new",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A plugin for NodeBB to take file uploads and store them on Aliyun OSS, NodeBB version >=  nodebb 1.15*, Less than 1.15 unknown compatibility \n; ",
   "main": "index.js",
   "scripts": {
