@@ -306,7 +306,7 @@ function uploadToOSS(filename, err, buffer, callback) {
             if (!host.startsWith("https")) {
                 host = "https://" + host;
             }
-            url = host + "/" + params.Key
+            url = host + "/" + encodeURI(params.Key)
         }
         callback(null, {
             name: filename,
