@@ -9,7 +9,7 @@
 
 | Plugin Version | Dependency     | Version Requirement     |
 | ---------------| -------------- |:-----------------------:|
-| 1.0.1          | NodeBB         | >= 1.5.* |
+| 1.0.1          | NodeBB         | >= 1.15.* |
 
 一个用于NodeBB的插件，用于上传文件并将其存储在S3上，它使用NodeBB中的`filter：uploadImage`钩子。 
 (A plugin for NodeBB to take file uploads and store them on S3, uses the `filter:uploadImage` hook in NodeBB. )

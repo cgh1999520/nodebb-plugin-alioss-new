@@ -1,7 +1,7 @@
 {
     "id": "nodebb-plugin-alioss-new",
     "name": "Aliyun OSS Upload File And Image Plugin",
-    "description": "A plugin for NodeBB to take file uploads and store them on Aliyun OSS, NodeBB version >=  nodebb 1.5*, Less than 1.5 unknown compatibility \n; ",
+    "description": "A plugin for NodeBB to take file uploads and store them on Aliyun OSS, NodeBB version >=  nodebb 1.15*, Less than 1.15 unknown compatibility \n; ",
     "url": "https://github.com/cgh1999520/nodebb-plugin-alioss-new",
     "library": "./index.js",
     "staticDirs": {
